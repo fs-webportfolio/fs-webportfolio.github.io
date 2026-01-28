@@ -82,61 +82,60 @@
 </head>
 <body>
 
-    <h1>🚀 Meine Live-Projekte</h1>
+    <h1>🚀 Meine WebCode-Projekte</h1>
     <div id="portfolio">Lädt die Galerie...</div>
 
 
 <script>
-const username = 'fs-webportfolio';
+    const username = 'fs-webportfolio' // <-- DEIN USERNAME mit einfachen Anführungszeichen HIER EINTRAGEN
 
-async function loadRepos() {
-    const container = document.getElementById('portfolio');
-    try {
-        const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
-        
-        if (!response.ok) {
-            throw new Error(`GitHub Fehler: ${response.status} - Wurde der Name korrekt geschrieben?`);
+    async function loadRepos() {
+        try {
+            const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=50&sort=updated`);
+
+            if (!response.ok) {
+                throw new Error(`GitHub Fehler: ${response.status} - Wurde der Name korrekt geschrieben?`);
+            }
+
+            const repos = await response.json();
+            const container = document.getElementById('portfolio');
+            container.innerHTML = '';
+
+            // Nur Repos mit aktiven GitHub Pages
+            const pagesRepos = repos.filter(repo => repo.has_pages && repo.name !== `${username}.github.io`);
+
+            if (pagesRepos.length === 0) {
+                container.innerHTML = 'Keine öffentlichen Repositories gefunden.';
+                return;
+            }
+
+            pagesRepos.forEach(repo => {
+                const imageUrl = `https://raw.githubusercontent.com/${username}/${repo.name}/main/preview.jpg`;
+                const liveUrl = `https://${username}.github.io/${repo.name}/`;
+
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <img class="preview-img" ${isFirst} src="${imageUrl}" loading="lazy"
+                     onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/${username}/${username}.github.io/main/placeholder.jpg'" 
+                     alt="Projekt Vorschau">
+                    <div class="content">
+                        <h3>${repo.name.replace(/-/g, ' ')}</h3>
+                        <p>${repo.description || 'Keine Beschreibung hinterlegt.'}</p>
+                        <a class="btn" href="${liveUrl}" target="_blank">Projekt ansehen</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        } catch (e) {
+            document.getElementById('portfolio').innerHTML = 'Fehler beim Laden der Projekte.';
+            // alls Fehler ausgabe im Browser gewünscht:
+            // catch (e) 
+            //     container.innerHTML = `<p style="color:red">Fehler: ${e.message}</p>`;
+            //     console.error(e);
         }
-
-        // Erst definieren wir 'repos', damit wir es danach loggen können:
-        const repos = await response.json();
-        console.log("Gefundene Repos:", repos);  // Zeigt alle Daten in der F12-Konsole
-
-        container.innerHTML = '';
-
-        // Wir entfernen testweise den "has_pages" Filter, um zu sehen, ob überhaupt etwas kommt
-        // Wenn das klappt, ändern wir es später wieder zurück
-        const pagesRepos = repos.filter(repo => repo.name !== `${username}.github.io`);
-
-        if (pagesRepos.length === 0) {
-            container.innerHTML = 'Keine öffentlichen Repositories gefunden.';
-            return;
-        }
-
-        pagesRepos.forEach(repo => {
-            const imageUrl = `https://raw.githubusercontent.com/${username}/${repo.name}/main/preview.png`;
-            const liveUrl = `https://${username}.github.io/${repo.name}/`;
-
-            const card = document.createElement('div');
-            card.className = 'project-card';
-            card.innerHTML = `
-                <img class="preview-img" src="${imageUrl}" 
-                     onerror="this.src='https://images.unsplash.com'" 
-                     alt="Vorschau">
-                <div class="content">
-                    <h3>${repo.name}</h3>
-                    <p>${repo.description || 'Ein GitHub Projekt.'}</p>
-                    <a class="btn" href="${liveUrl}" target="_blank">Live-Seite öffnen</a>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    } catch (e) {
-        container.innerHTML = `<p style="color:red">Fehler: ${e.message}</p>`;
-        console.error(e);
     }
-}
-loadRepos();
+    loadRepos();
 
     </script>
 </body>
