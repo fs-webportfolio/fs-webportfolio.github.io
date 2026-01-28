@@ -128,12 +128,9 @@
                 container.appendChild(card);
             });
         } catch (e) {
-            document.getElementById('portfolio').innerHTML = 'Fehler beim Laden der Projekte.';
-            // alls Fehler ausgabe im Browser gewünscht:
-            // catch (e) 
-            //     container.innerHTML = `<p style="color:red">Fehler: ${e.message}</p>`;
-            //     console.error(e);
-        }
+            container.innerHTML = `<p style="color:red">Fehler: ${e.message}</p>`;
+            console.error(e);
+            }
     }
     loadRepos();
 
