@@ -109,7 +109,8 @@
                 return;
             }
 
-            pagesRepos.forEach(repo => {
+            pagesRepos.forEach((repo, index) => {
+               const isFirst = index === 0 ? 'fetchpriority="high"' : '';
                 const imageUrl = `https://raw.githubusercontent.com/${username}/${repo.name}/main/preview.jpg`;
                 const liveUrl = `https://${username}.github.io/${repo.name}/`;
 
