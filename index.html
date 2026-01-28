@@ -98,7 +98,9 @@ async function loadRepos() {
             throw new Error(`GitHub Fehler: ${response.status} - Wurde der Name korrekt geschrieben?`);
         }
 
-        const repos = await response.json();
+        const response = await fetch(`https://api.github.com{username}/repos`, {
+    headers: { 'Accept': 'application/vnd.github.v3+json' }
+});
         console.log("Gefundene Repos:", repos); // Zeigt alle Daten in der F12-Konsole
 
         container.innerHTML = '';
